@@ -55,3 +55,79 @@ This configuration ensures a structured and scalable environment tailored to eff
 
 For the full SQL script and detailed configuration steps, please refer to the [Environment Setup](sql/environment_setup.sql) in the `SQL` folder of this repository.
 
+## Deigning Data Pipelines
+
+In this project, we leverage Snowflake's capabilities to create efficient and scalable data pipelines for near-real-time (NRT) data integration. This includes the use of Continuous Data Pipelines and Snowpipe for continuous data loading.
+ ![Data Pipeline](images/continous_transformation_pipeline.png)
+
+### Overview of the Data Pipeline Design
+
+Snowflake provides powerful tools like streams, tasks, and Snowpipe to automate and manage data flows:
+
+- **Streams**: These automatically track all changes to a table (inserts, updates, deletes) without impacting performance. Any new data added to a staging table is immediately captured as a 'delta', showing the changes that need processing.
+
+- **Snowpipe**: Snowpipe is used for continuous, automated loading of data into Snowflake, ensuring that data is quickly available for processing and analysis without manual intervention.
+
+- **Tasks**: Tasks are triggered at defined intervals (e.g., every 1-2 minutes) to check for new data in streams and then execute SQL commands to move this data to the appropriate Raw Data Vault objects. They can be organized into a dependency graph, ensuring sequential processing where necessary.
+
+- **Multi-Table Insert (MTI)**: We use MTI within tasks to simultaneously populate multiple Data Vault objects from a single command, enhancing efficiency and parallel processing.
+
+### Scalability and Serverless Options
+
+The tasks are assigned to virtual warehouses that scale automatically, from XS to 6XL, to handle various data volumes and ensure optimal performance. Snowflake's recent innovation, serverless tasks, allows for an even more efficient management of compute resources, although this feature is beyond the scope of this guide.
+
+### Continuous and Automated Data Flow
+
+Using these tools, our data pipeline continuously updates the Raw Data Vault, and subsequent updates are propagated through to Business Vault objects and beyond. This efficient, incremental data processing ensures data is quickly available for end-use, supporting dynamic business needs with minimal latency.
+
+This architecture provides a robust framework for handling large volumes of data efficiently, maintaining the agility and responsiveness crucial for modern data-driven enterprises.
+
+## 📊 Sample Data & Staging Area Setup
+
+This section outlines the setup process for staging data in Snowflake using sample datasets. We utilize Snowflake's structured querying capabilities to create and manage tables and automate data loading through Snowpipe.
+
+### Setting Up the Staging Area
+
+1. **Role and Warehouse Configuration**
+   - Use the `ACCOUNTADMIN` role for highest level privileges.
+   - Set `dv_lab_wh` as the active warehouse for processing.
+
+2. **Schema Preparation**
+   - Switch to the `L00_stg` schema dedicated to staging operations.
+
+3. **Table Creation**
+   - **stg_nation** and **stg_region**: Created to store static reference data from Snowflake's sample datasets.
+   - **stg_customer** and **stg_orders**: Structured to ingest dynamic data, with fields for JSON and CSV payloads, respectively, along with metadata like filenames and load timestamps.
+
+### Data Streams and Tasks
+
+- **Streams**: 
+  - `stg_customer_strm` and `stg_orders_strm` are set up on the respective tables to monitor and capture data modifications.
+  
+- **Stages**:
+  - `customer_data` and `orders_data` stages are created to manage the data files in JSON and CSV formats, ensuring that data is ready for ingestion.
+
+### Snowpipe for Automated Data Loading
+
+- **Snowpipe Configuration**:
+  - `stg_orders_pp` and `stg_customer_pp` are configured to load data incrementally from the stages to the staging tables using the COPY command. This setup enables near real-time data availability in the staging area.
+
+### Data Unloading and Validation
+
+- Data is extracted from the TPCH sample dataset and loaded into the designated stages.
+- Validate the data upload by listing files in the stages and querying metadata.
+
+### Business Key Derivation
+
+- Views `stg_customer_strm_outbound` and `stg_order_strm_outbound` are created to parse and transform streamed data into structured formats, deriving business keys using Snowflake’s hashing functions. These views facilitate the extraction of meaningful insights and ensure data readiness for entry into the Data Vault.
+
+### Final Setup and Data Integrity Checks
+
+- Manual triggers refresh the Snowpipe processes to ensure all new data is loaded.
+- Validate the integrity and count of the data across tables and streams to ensure consistency and completeness.
+
+### Code Accessibility
+
+- All SQL commands and scripts used in this setup are available in the `[SQL folder](SQL/setup_staging.sql)` of this repository for detailed review and replication in similar environments.
+
+This setup exemplifies a robust approach to data staging in Snowflake, leveraging the platform's advanced data management capabilities to prepare data for further processing and analysis in a Data Vault architecture.
