@@ -53,5 +53,5 @@ The provided SQL script configures the Snowflake environment to support this pro
 
 This configuration ensures a structured and scalable environment tailored to efficiently manage and process data.
 
-For the full SQL script and detailed configuration steps, please refer to the [SQL setup file](sql/environment_setup.sql) in the `SQL` folder of this repository.
+For the full SQL script and detailed configuration steps, please refer to the [Environment Setup](sql/environment_setup.sql) in the `SQL` folder of this repository.
 
