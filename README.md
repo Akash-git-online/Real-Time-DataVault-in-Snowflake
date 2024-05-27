@@ -126,6 +126,14 @@ This section outlines the setup process for staging data in Snowflake using samp
 - Manual triggers refresh the Snowpipe processes to ensure all new data is loaded.
 - Validate the integrity and count of the data across tables and streams to ensure consistency and completeness.
 
+### Snowflake Stage Layer
+<p align="center">
+  <img src="images/L00_Tables.png" alt="Table" width="30%"/>
+  <img src="images/L00_view_stages.png" alt="View" width="30%"/>
+  <img src="images/L00_pipes_streams.png" alt="Pipe" width="30%"/>
+</p>
+
+
 ### Code Accessibility
 
 - All SQL commands and scripts used in this setup are available in the `[SQL folder](SQL/setup_staging.sql)` of this repository for detailed review and replication in similar environments.
