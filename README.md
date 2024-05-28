@@ -136,6 +136,6 @@ This section outlines the setup process for staging data in Snowflake using samp
 
 ### Code Accessibility
 
-- All SQL commands and scripts used in this setup are available in the `[SQL folder](SQL/setup_staging.sql)` of this repository for detailed review and replication in similar environments.
+- All SQL commands and scripts used in this setup are available in the [Staging Area Setup](sql/staging_area_setup.sql) of this repository for detailed review and replication in similar environments.
 
 This setup exemplifies a robust approach to data staging in Snowflake, leveraging the platform's advanced data management capabilities to prepare data for further processing and analysis in a Data Vault architecture.
